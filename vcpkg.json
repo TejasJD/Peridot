@@ -1,0 +1,11 @@
+{
+  "name": "peridot",
+  "version": "0.0.1",
+  "description": "OpenGL Renderer",
+  "dependencies": [
+    "glfw3",
+    "glad",
+    "spdlog",
+    "glm"
+  ]
+}
