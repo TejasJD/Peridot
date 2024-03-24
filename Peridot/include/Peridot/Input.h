@@ -3,6 +3,7 @@
 #include <functional>
 #include <unordered_set>
 #include <unordered_map>
+#include <tuple>
 
 #include "Peridot/MouseCodes.h"
 #include "Peridot/KeyCodes.h"
@@ -18,7 +19,7 @@ class PollModeInput {
       : mContext(context) {}
 
   using ButtonStateCallback = std::function<void(ButtonState)>;
-  using CursorCallback = std::function<void(const double, const double)>;
+  using CursorCallback = std::function<void(double, double, double, double)>;
 
   void RegisterKeyCallback(const KeyCode key,
                            const ButtonStateCallback& callback);
@@ -30,10 +31,10 @@ class PollModeInput {
   void UnregisterCursorCallback();
 
   void PollAndInvokeCallbacks() const {
-    auto [x, y] = GetCursorPos();
+    auto [prevX, prevY, newX, newY] = GetCursorPos();
 
     if (mCursorCallback) {
-      (*mCursorCallback)(x, y);
+      (*mCursorCallback)(prevX, prevY, newX, newY);
     } 
 
     for (auto&& [key, callback] : mKeyMappings) {
@@ -47,10 +48,11 @@ class PollModeInput {
     }
   }
 
- private:
   ButtonState GetKeyState(const KeyCode key) const;
   ButtonState GetMouseButtonState(const MouseCode mouseButton) const;
-  std::pair<double, double> GetCursorPos() const;
+  std::tuple<double, double, double, double> GetCursorPos() const;
+
+ private:
 
   std::unordered_map<KeyCode, ButtonStateCallback> mKeyMappings;
   std::unordered_map<MouseCode, ButtonStateCallback> mMouseButtonMappings;

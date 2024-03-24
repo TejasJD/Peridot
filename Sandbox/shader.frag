@@ -1,9 +1,10 @@
 #version 450 core
 
-in vec4 vColor;
+in vec3 vPos;
+
 out vec4 uColor;
 
 void main()
 {
-	uColor = vColor;
+	uColor = vec4(vPos, 1.0f);
 } 

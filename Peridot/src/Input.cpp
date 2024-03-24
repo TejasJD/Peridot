@@ -29,11 +29,13 @@ ButtonState PollModeInput::GetMouseButtonState(const MouseCode button) const {
   return buttonState;
 }
 
-std::pair<double, double> PollModeInput::GetCursorPos() const {
-  std::pair<double, double> cursorPositions;
+std::tuple<double, double, double, double> PollModeInput::GetCursorPos() const {
+  static std::pair<double, double> cursorPositions;
+  auto prevCursorPositions = cursorPositions;
   glfwGetCursorPos(mContext->GetRawWindow(), &cursorPositions.first,
                    &cursorPositions.second);
-  return cursorPositions;
+  return std::tie(prevCursorPositions.first, prevCursorPositions.second,
+                  cursorPositions.first, cursorPositions.second);
 }
 
 void PollModeInput::RegisterKeyCallback(const KeyCode key,

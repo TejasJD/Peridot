@@ -36,7 +36,12 @@ class Camera {
   float GetFarClippingPlane() const { return mFarPlane; }
   glm::vec3 GetPosition() const { return mPosition; }
   glm::vec3 GetRotation() const { return mRotation; }
-  glm::mat4 GetViewMatrix() const { return mViewMatrix; }
+  glm::mat4 GetTransform() const { return mTransform; }
+  glm::mat4 GetRotationMatrix() const {
+    auto inverseTranslation = glm::translate(glm::mat4(1.0f), -mPosition);
+    return inverseTranslation * mTransform;
+  }
+  glm::mat4 GetViewMatrix() const { return glm::inverse(mTransform); }
   glm::mat4 GetProjectionMatrix() const { return mProjMatrix; }
 
   void SetZoomOrPov(const float zoomOrFov) {
@@ -89,8 +94,8 @@ class Camera {
                        -1.0f, 1.0f, mNearPlane, mFarPlane);
         break;
       case Perspective:
-        mProjMatrix =
-            glm::perspective(mZoomOrFov, mAspectRatio, mNearPlane, mFarPlane);
+        mProjMatrix = glm::perspective(mZoomOrFov, mAspectRatio,
+                                       std::max(0.1f, mNearPlane), mFarPlane);
         break;
       default:
         break;
@@ -98,23 +103,13 @@ class Camera {
   }
 
   void RecalculateViewMatrix() {
-    glm::vec4 lookingAt = {0.0f, 0.0f, -1.0f, 1.0f};
-    glm::vec4 cameraPosition = {0.0f, 0.0f, 0.0f, 1.0f};
-    glm::vec4 cameraUp = {0.0f, 1.0f, 0.0f, 1.0f};
     glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), mPosition);
     glm::mat4 rotationMatrix =
         glm::rotate(glm::mat4(1.0f), mRotation.z, {0.0f, 0.0f, 1.0f}) *
         glm::rotate(glm::mat4(1.0f), mRotation.y, {0.0f, 1.0f, 0.0f}) *
         glm::rotate(glm::mat4(1.0f), mRotation.x, {1.0f, 0.0f, 0.0f});
 
-    lookingAt = translationMatrix * rotationMatrix * lookingAt;
-    cameraPosition = translationMatrix * rotationMatrix * cameraPosition;
-    cameraUp = rotationMatrix * cameraUp;
-
-    mViewMatrix = glm::lookAt(
-        glm::vec3{cameraPosition.x, cameraPosition.y, cameraPosition.z},
-        glm::vec3{lookingAt.x, lookingAt.y, lookingAt.z},
-        {cameraUp.x, cameraUp.y, cameraUp.z});
+    mTransform = translationMatrix * rotationMatrix;
   }
 
  private:
@@ -124,71 +119,10 @@ class Camera {
   float mAspectRatio;
   float mNearPlane;
   float mFarPlane;
-  glm::mat4 mViewMatrix;
+  glm::mat4 mTransform;
   glm::mat4 mProjMatrix;
   glm::vec3 mPosition;
   glm::vec3 mRotation;
-};
-
-class OrthographicCameraController {
- public:
-  OrthographicCameraController(const float delta, const float translationSpeed,
-                               const float rotationSpeed)
-      : mCamera(Camera::Orthographic, 1.0f, 1.0f),
-        mDelta(delta),
-        mTranslationSpeed(translationSpeed),
-        mRotationSpeed(rotationSpeed) {}
-
-  Camera& GetCamera() { return mCamera; }
-  const Camera& GetCamera() const { return mCamera; }
-  float GetTranslationSpeed() const { return mTranslationSpeed; }
-  float GetRotationSpeed() const { return mRotationSpeed; }
-
-  void SetTranslationSpeed(const float speed) { mTranslationSpeed = speed; }
-  void SetRotationSpeed(const float speed) { mRotationSpeed = speed; }
-  void SetDelta(const float delta) { mDelta = delta; }
-
-  void MoveUp() {
-    glm::vec3 currentPosition = mCamera.GetPosition();
-    currentPosition.y += mTranslationSpeed * mDelta;
-    mCamera.SetPosition(currentPosition);
-  }
-
-  void MoveDown() {
-    glm::vec3 currentPosition = mCamera.GetPosition();
-    currentPosition.y -= mTranslationSpeed * mDelta;
-    mCamera.SetPosition(currentPosition);
-  }
-
-  void MoveRight() {
-    glm::vec3 currentPosition = mCamera.GetPosition();
-    currentPosition.x += mTranslationSpeed * mDelta;
-    mCamera.SetPosition(currentPosition);
-  }
-
-  void MoveLeft() {
-    glm::vec3 currentPosition = mCamera.GetPosition();
-    currentPosition.x -= mTranslationSpeed * mDelta;
-    mCamera.SetPosition(currentPosition);
-  }
-
-  void RotateLeft() {
-    glm::vec3 currentRotation = mCamera.GetRotation();
-    currentRotation.z -= mRotationSpeed * mDelta;
-    mCamera.SetRotation(currentRotation);
-  }
-
-  void RotateRight() {
-    glm::vec3 currentRotation = mCamera.GetRotation();
-    currentRotation.z += mRotationSpeed * mDelta;
-    mCamera.SetRotation(currentRotation);
-  }
-
- private:
-  Camera mCamera;
-  float mDelta;
-  float mTranslationSpeed;
-  float mRotationSpeed;
 };
 
 }  // namespace Peridot

@@ -11,7 +11,9 @@ void RenderCall::SetClearColor(const float r, const float g, const float b,
   glClearColor(r, g, b, a);
 }
 
-void RenderCall::ClearColor() { glClear(GL_COLOR_BUFFER_BIT); }
+void RenderCall::ClearColorAndDepth() {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
 
 void RenderCall::DrawElements(const size_t count) {
   glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);

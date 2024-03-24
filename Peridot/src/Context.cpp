@@ -74,6 +74,8 @@ std::shared_ptr<Context> Context::Create(const ContextSpecification& ctxSpec) {
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(Utils::MessageCallback, nullptr);
 
+  glEnable(GL_DEPTH_TEST);
+
   ctx->currentWidth = ctxSpec.width;
   ctx->currentHeight = ctxSpec.height;
   ctx->mAspectRatio = static_cast<float>(ctxSpec.width) / ctxSpec.height;
