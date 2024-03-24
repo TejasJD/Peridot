@@ -103,14 +103,14 @@ struct App {
                 break;
             }
           });
-      app->input->RegisterCursorCallback(
-          [app](double prevX, double prevY, double newX, double newY) {
-        if (app->input->GetMouseButtonState(Peridot::MouseCode::ButtonRight)
-            == Peridot::ButtonState::Released) {
+      app->input->RegisterCursorCallback([app](double prevX, double prevY,
+                                               double newX, double newY) {
+        if (app->input->GetMouseButtonState(Peridot::MouseCode::ButtonRight) ==
+            Peridot::ButtonState::Released) {
           return;
         }
-            app->controller->MoveWithCursor(prevX, prevY, newX, newY);
-          });
+        app->controller->MoveWithCursor(prevX, prevY, newX, newY);
+      });
     }
     return app;
   }
