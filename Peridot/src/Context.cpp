@@ -12,6 +12,15 @@
 
 #include "Peridot/Context.h"
 
+// make use of dedicated GPU on windows
+#ifdef _WIN32
+
+extern "C" {
+_declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+}
+
+#endif
+
 namespace Peridot {
 
 namespace Utils {
@@ -74,11 +83,13 @@ std::shared_ptr<Context> Context::Create(const ContextSpecification& ctxSpec) {
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(Utils::MessageCallback, nullptr);
   glEnable(GL_DEPTH_TEST);
-  
+
   auto cardString = (const char*)glGetString(GL_RENDERER);
   auto glVersion = (const char*)glGetString(GL_VERSION);
+  auto vendor = (const char*)glGetString(GL_VENDOR);
   spdlog::info("graphics card: {}", cardString);
   spdlog::info("open gl version: {}", glVersion);
+  spdlog::info("gl vendor: {}", vendor);
 
   ctx->currentWidth = ctxSpec.width;
   ctx->currentHeight = ctxSpec.height;
