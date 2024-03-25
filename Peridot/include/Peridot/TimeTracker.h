@@ -1,11 +1,14 @@
 #pragma once
 
 namespace Peridot {
-	class TimeTracker {
-	public:
-		TimeTracker();
-		float Delta();
-	private:
-		float mTimePoint = 0.0f;
-	};
-}
+class TimeTracker {
+ public:
+  TimeTracker();
+  void Update();
+  float Delta();
+
+ private:
+  float mCurrentTime = 0.0f;
+  float mPreviousTime = 0.0f;
+};
+}  // namespace Peridot

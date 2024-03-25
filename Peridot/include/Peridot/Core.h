@@ -46,6 +46,7 @@ void AppRunner<App>::RunApp() {
   TimeTracker tracker;
 
   while (mCtx->ShouldRun() && mApp->ShouldRun()) {
+    tracker.Update();
     mApp->Update(tracker.Delta());
     mCtx->Update(tracker.Delta());
   }

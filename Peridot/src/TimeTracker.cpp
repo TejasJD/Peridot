@@ -4,12 +4,17 @@
 
 namespace Peridot {
 
-TimeTracker::TimeTracker() : mTimePoint(static_cast<float>(glfwGetTime())) {}
+TimeTracker::TimeTracker()
+    : mCurrentTime(static_cast<float>(glfwGetTime())),
+      mPreviousTime(static_cast<float>(glfwGetTime())) {}
+
+void TimeTracker::Update() {
+  mCurrentTime = static_cast<float>(glfwGetTime());
+}
 
 float TimeTracker::Delta() {
-  float newTimePoint = static_cast<float>(glfwGetTime());
-  float delta = newTimePoint - mTimePoint;
-  mTimePoint = newTimePoint;
+  auto delta = mCurrentTime - mPreviousTime;
+  mPreviousTime = mCurrentTime;
   return delta;
 }
 

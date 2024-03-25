@@ -55,7 +55,7 @@ struct App {
     Peridot::RenderCall::SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     app->controller = std::make_shared<Peridot::PerspectiveCameraController>(
-        1.0f, 1.5f, 3.0f);
+        1.0f, 2.0f, 3.0f);
 
     app->controller->GetCamera().SetAspectRatio(ctx->GetAspectRatio());
     app->controller->GetCamera().SetPosition({0.0f, 0.0f, 3.0f});
@@ -117,8 +117,6 @@ struct App {
 
   void Update(float delta) {
     Peridot::RenderCall::ClearColorAndDepth();
-
-    // spdlog::info("Aspect ratio: {}", ctx->GetAspectRatio());
 
     controller->SetDelta(delta);
     controller->GetCamera().SetAspectRatio(ctx->GetAspectRatio());

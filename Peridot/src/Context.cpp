@@ -73,8 +73,12 @@ std::shared_ptr<Context> Context::Create(const ContextSpecification& ctxSpec) {
 
   glEnable(GL_DEBUG_OUTPUT);
   glDebugMessageCallback(Utils::MessageCallback, nullptr);
-
   glEnable(GL_DEPTH_TEST);
+  
+  auto cardString = (const char*)glGetString(GL_RENDERER);
+  auto glVersion = (const char*)glGetString(GL_VERSION);
+  spdlog::info("graphics card: {}", cardString);
+  spdlog::info("open gl version: {}", glVersion);
 
   ctx->currentWidth = ctxSpec.width;
   ctx->currentHeight = ctxSpec.height;

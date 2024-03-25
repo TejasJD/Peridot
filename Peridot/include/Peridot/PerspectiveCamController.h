@@ -88,7 +88,7 @@ class PerspectiveCameraController {
   float mDelta;
   float mTranslationSpeed;
   float mRotationSpeed;
-  float mSensitivity = 1.0f;
+  float mSensitivity = 0.5f;
 };
 
 }  // namespace Peridot
